@@ -21,12 +21,12 @@ func analayzrJSON(json string) []string {
 			bracesSum -= 1
 		}
 
-		// Save json object start position
+		// Save json object objStartPosition position
 		if bracesSum == 2 && runeValue == '{' {
 			start = i
 		}
 
-		// Save object to array. It's part of json from start to i + w
+		// Save object to array. It's part of json from objStartPosition to i + w
 		if bracesSum == 1 && runeValue == '}' {
 			objects = append(objects, json[start:i+w])
 			start = 0
@@ -41,8 +41,9 @@ func NewJSONObjectReader() ParserJSONByParts {
 }
 
 type jsonParser struct {
-	bracesSum int
-	remainder string
+	bracesSum        int
+	remainder        string
+	objStartPosition int
 }
 
 func (p *jsonParser) addBracesSum(value int) error {
@@ -57,7 +58,7 @@ func (p *jsonParser) ReadObjInJSON(jsonPart string) ([]string, error) {
 	remainderLength := len(p.remainder)
 	p.remainder += jsonPart
 	var objects []string
-	var start, end int
+	var objEndPosition int
 
 	for i, w := 0, 0; i < len(jsonPart); i += w {
 		runeValue, width := utf8.DecodeRuneInString(jsonPart[i:])
@@ -76,17 +77,22 @@ func (p *jsonParser) ReadObjInJSON(jsonPart string) ([]string, error) {
 			}
 		}
 
-		// Save json remainder start position
+		// Save json remainder objStartPosition position
 		if p.bracesSum == 2 && runeValue == '{' {
-			start = remainderLength + i
+			p.objStartPosition = remainderLength + i
 		}
 
 		// Save remainder to array
 		if p.bracesSum == 1 && runeValue == '}' {
-			end = remainderLength + i + w
-			objects = append(objects, p.remainder[start:end])
+			objEndPosition = remainderLength + i + w
+			objects = append(objects, p.remainder[p.objStartPosition:objEndPosition])
 		}
 		w = width
 	}
 	return objects, nil
 }
+
+//func prepareObject(str string) string{
+//	arrStr := strings.SplitAfterN(str, ":", 2)
+//	fmt.Println(arrStr)
+//}

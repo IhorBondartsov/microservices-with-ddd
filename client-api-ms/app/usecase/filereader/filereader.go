@@ -1,7 +1,6 @@
 package filereader
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/IhorBondartsov/microservices-with-ddd/client-api-ms/app/domain/models"
 	"github.com/IhorBondartsov/microservices-with-ddd/client-api-ms/app/usecase/filereader/jsonparser"
@@ -9,7 +8,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"strings"
 )
 
 type FileReader interface {
@@ -93,9 +91,8 @@ func (r *fileReader) worker(results <-chan []string) {
 			}
 			for k, _ := range obj {
 				m := models.Place{}
-				// TODO: rewritte
-				arrStr := strings.SplitAfterN(obj[k], ":", 2)
-				err := json.Unmarshal([]byte(arrStr[1]), &m)
+				// TODO: i think i can send only string without unmarshal
+				err := m.UnmarshalJSON([]byte(obj[k]))
 				if err != nil {
 					log.Printf("Cant unmarshal Place: \n Error: %v,\n JSON: %v", err, obj[k])
 				}

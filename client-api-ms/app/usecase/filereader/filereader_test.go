@@ -16,7 +16,11 @@ func TestParseJSON_ParseJSON(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer file.Close()
+	defer func() {
+		err := file.Close()
+		a.NoError(err)
+	}()
+
 	entryForResult := make(chan models.Place)
 	fr := NewFileReader(file, 3, 100, entryForResult)
 	err = fr.ReadPlaces()
@@ -26,7 +30,7 @@ func TestParseJSON_ParseJSON(t *testing.T) {
 	for k := range entryForResult{
 			fmt.Println("result", k)
 			i++
-			if i == 1{
+			if i == 3{
 				break
 			}
 	}

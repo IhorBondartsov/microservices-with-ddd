@@ -2,12 +2,13 @@ package filereader
 
 import (
 	"fmt"
-	"github.com/IhorBondartsov/microservices-with-ddd/client-api-ms/app/domain/models"
-	"github.com/IhorBondartsov/microservices-with-ddd/client-api-ms/app/usecase/filereader/jsonparser"
-	"github.com/pkg/errors"
 	"io"
 	"log"
 	"os"
+
+	"github.com/IhorBondartsov/microservices-with-ddd/client-api-ms/app/domain/models"
+	"github.com/IhorBondartsov/microservices-with-ddd/client-api-ms/app/usecase/filereader/jsonparser"
+	"github.com/pkg/errors"
 )
 
 type FileReader interface {
